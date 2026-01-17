@@ -1,0 +1,68 @@
+{
+  "title": "What happens if a backend service crashes?",
+  "description": "The system should recover gracefully after a service crash.",
+  "tags": ["availability", "resilience"],
+
+  "steady-state-hypothesis": {
+    "title": "Service is responding normally",
+    "probes": [
+      {
+        "type": "probe",
+        "name": "service-is-running",
+        "tolerance": true,
+        "provider": {
+          "type": "python",
+          "module": "os.path",
+          "func": "exists",
+          "arguments": {
+            "path": "service.pid"
+          }
+        }
+      },
+      {
+        "type": "probe",
+        "name": "api-responds",
+        "tolerance": 200,
+        "provider": {
+          "type": "http",
+          "timeout": 3,
+          "url": "http://localhost:8080/health"
+        }
+      }
+    ]
+  },
+
+  "method": [
+    {
+      "type": "action",
+      "name": "kill-backend-service",
+      "provider": {
+        "type": "process",
+        "path": "powershell",
+        "arguments": "-Command Stop-Process -Id (Get-Content service.pid) -Force"
+      }
+    },
+    {
+      "type": "probe",
+      "name": "wait-for-recovery",
+      "tolerance": 200,
+      "provider": {
+        "type": "http",
+        "timeout": 5,
+        "url": "http://localhost:8080/health"
+      }
+    }
+  ],
+
+  "rollbacks": [
+    {
+      "type": "action",
+      "name": "restart-service",
+      "provider": {
+        "type": "process",
+        "path": "powershell",
+        "arguments": "-Command Start-Process python app.py"
+      }
+    }
+  ]
+}
