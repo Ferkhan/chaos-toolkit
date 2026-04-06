@@ -1,5 +1,13 @@
 # Proyecto de Pruebas con Chaos Toolkit
 
+## Integrantes
+
+- Chiluiza Anthony
+- Guachamin Emilia
+- Ludeña Henry
+- Nagua Fernando
+- Ximenez Joel
+
 ## Descripción
 
 Este proyecto demuestra el uso de **Chaos Toolkit** para realizar pruebas de ingeniería del caos en un servicio backend simple desarrollado con Flask. El objetivo es validar la resiliencia y capacidad de recuperación del sistema ante fallos controlados.
